@@ -1,8 +1,8 @@
-const axios = require('axios');
-const xml2js = require('xml2js');
-const xmlbuilder = require('xmlbuilder');
+import axios from 'axios';
+import xml2js from 'xml2js';
+import xmlbuilder from 'xmlbuilder';
 
-module.exports = async function (context, myQueueItem) {
+export default async function (context, myQueueItem) {
     context.log('Service Bus queue triggered with message:', myQueueItem);
 
     try {
@@ -10,12 +10,6 @@ module.exports = async function (context, myQueueItem) {
         const parser = new xml2js.Parser();
         const jsonMessage = await parser.parseStringPromise(myQueueItem);
         context.log('Parsed XML to JSON:', jsonMessage);
-
-        // Validate XML here (basic validation for this example)
-        // You can implement a custom XML schema validation logic if needed.
-        if (!jsonMessage.HardwareStore || !jsonMessage.HardwareStore.Product) {
-            throw new Error("Invalid XML structure. 'Product' element is missing.");
-        }
 
         // Transform XML by adding StockStatus and LastUpdated fields
         jsonMessage.HardwareStore.Product.forEach(product => {
