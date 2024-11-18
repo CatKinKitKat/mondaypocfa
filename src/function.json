@@ -1,0 +1,12 @@
+{
+    "scriptFile": "index.js",
+    "bindings": [
+        {
+            "name": "myQueueItem",
+            "type": "serviceBusTrigger",
+            "direction": "in",
+            "queueName": "validated-queue",
+            "connection": "Endpoint=sb://mondaypoc.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=Xanlr4efWTUvU2nTvyAvV/3SfheJxq4Bv+ASbF3ceSc="
+        }
+    ]
+}

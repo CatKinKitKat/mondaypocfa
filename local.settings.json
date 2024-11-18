@@ -1,0 +1,11 @@
+{
+    "IsEncrypted": false,
+    "Values": {
+        "FUNCTIONS_WORKER_RUNTIME": "node",
+        "AzureWebJobsStorage": "UseDevelopmentStorage=true",
+        "RestApiUrl": "https://pastebin.com/api/api_post.php",
+        "RestApiKey": "_8C4c3CVFvfgLYW-asXn9QYhbLsVvlXu",
+        "ServiceBusConnectionString": "Endpoint=sb://mondaypoc.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=Xanlr4efWTUvU2nTvyAvV/3SfheJxq4Bv+ASbF3ceSc=",
+        "QueueName": "validated-queue"
+    }
+}
