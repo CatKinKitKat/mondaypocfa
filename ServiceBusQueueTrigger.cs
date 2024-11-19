@@ -19,7 +19,7 @@ namespace MondayPOCFA
 
         [Function("ServiceBusQueueTrigger")]
         public async Task Run(
-            [ServiceBusTrigger("validated-queue", Connection = "ServiceBusConnectionString")] string message,
+            [ServiceBusTrigger("QueueName", Connection = "ServiceBusConnectionString")] string message,
             CancellationToken cancellationToken)
         {
             try
