@@ -29,19 +29,14 @@ namespace MondayPOCFA
             {
                 _logger.LogInformation("Processing message: {Message}", message);
 
-                var apiUrl = Environment.GetEnvironmentVariable("RestApiUrl")
-                    ?? throw new InvalidOperationException("RestApiUrl is not configured");
-                var apiKey = Environment.GetEnvironmentVariable("RestApiKey")
-                    ?? throw new InvalidOperationException("RestApiKey is not configured");
+                var api_version = Environment.GetEnvironmentVariable("API_VERSION") ?? throw new ArgumentNullException("API_VERSION");
+                var sp = Environment.GetEnvironmentVariable("SP") ?? throw new ArgumentNullException("SP");
+                var sv = Environment.GetEnvironmentVariable("SV") ?? throw new ArgumentNullException("SV");
+                var sig = Environment.GetEnvironmentVariable("SIG") ?? throw new ArgumentNullException("SIG");
 
-                var content = new FormUrlEncodedContent(new[]
-                {
-                    new KeyValuePair<string, string>("api_dev_key", apiKey),
-                    new KeyValuePair<string, string>("api_option", "paste"),
-                    new KeyValuePair<string, string>("api_paste_code", message)
-                });
+                var url = $"https://prod-238.westeurope.logic.azure.com:443/workflows/b14e904cbfdb424cb056e59d052aaa59/triggers/When_a_HTTP_request_is_received/paths/invoke?api-version={api_version}&sp={sp}&sv={sv}&sig={sig}";
 
-                using var response = await _httpClient.PostAsync(apiUrl, content, cancellationToken);
+                var response = await _httpClient.GetAsync(url, cancellationToken);
 
                 if (response.IsSuccessStatusCode)
                 {
