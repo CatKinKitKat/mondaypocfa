@@ -1,4 +1,7 @@
 using System;
+using System.Collections.Generic;
+using System.Net.Http;
+using System.Threading;
 using System.Threading.Tasks;
 using Azure.Messaging.ServiceBus;
 using Microsoft.Azure.Functions.Worker;
@@ -19,7 +22,7 @@ namespace MondayPOCFA
 
         [Function("ServiceBusQueueTrigger")]
         public async Task Run(
-            [ServiceBusTrigger("QueueName", Connection = "ServiceBusConnectionString")] string message,
+            [ServiceBusTrigger("%QueueName%", Connection = "ServiceBusConnectionString")] string message,
             CancellationToken cancellationToken)
         {
             try
@@ -33,10 +36,10 @@ namespace MondayPOCFA
 
                 var content = new FormUrlEncodedContent(new[]
                 {
-                new KeyValuePair<string, string>("api_dev_key", apiKey),
-                new KeyValuePair<string, string>("api_option", "paste"),
-                new KeyValuePair<string, string>("api_paste_code", message)
-            });
+                    new KeyValuePair<string, string>("api_dev_key", apiKey),
+                    new KeyValuePair<string, string>("api_option", "paste"),
+                    new KeyValuePair<string, string>("api_paste_code", message)
+                });
 
                 using var response = await _httpClient.PostAsync(apiUrl, content, cancellationToken);
 
@@ -52,9 +55,14 @@ namespace MondayPOCFA
 
                 _logger.LogInformation("Message processed successfully.");
             }
+            catch (HttpRequestException httpEx)
+            {
+                _logger.LogError(httpEx, "HTTP request failed while processing the message.");
+                throw;
+            }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error processing the message");
+                _logger.LogError(ex, "An unexpected error occurred while processing the message.");
                 throw;
             }
         }
