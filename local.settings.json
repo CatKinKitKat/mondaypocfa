@@ -1,8 +1,8 @@
 {
     "IsEncrypted": false,
     "Values": {
-        "FUNCTIONS_WORKER_RUNTIME": "node",
         "AzureWebJobsStorage": "UseDevelopmentStorage=true",
+        "FUNCTIONS_WORKER_RUNTIME": "dotnet-isolated",
         "RestApiUrl": "https://pastebin.com/api/api_post.php",
         "RestApiKey": "_8C4c3CVFvfgLYW-asXn9QYhbLsVvlXu",
         "ServiceBusConnectionString": "Endpoint=sb://mondaypoc.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=mYcqCPQ841iPdtStYNMlFzWWvv969b4oL+ASbAQcnFU=",

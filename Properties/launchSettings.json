@@ -1,0 +1,9 @@
+{
+  "profiles": {
+    "MondayPOCFA": {
+      "commandName": "Project",
+      "commandLineArgs": "--port 7197",
+      "launchBrowser": false
+    }
+  }
+}

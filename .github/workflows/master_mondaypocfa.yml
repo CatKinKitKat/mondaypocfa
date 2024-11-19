@@ -1,4 +1,4 @@
-name: Build and deploy Node.js project to Azure Function App - MondayPOCFA
+name: Build and deploy .NET project to Azure Function App - MondayPOCFA
 
 on:
   push:
@@ -7,8 +7,8 @@ on:
   workflow_dispatch:
 
 env:
-  AZURE_FUNCTIONAPP_PACKAGE_PATH: "."
-  NODE_VERSION: "20.x"
+  AZURE_FUNCTIONAPP_PACKAGE_PATH: '.'
+  DOTNET_VERSION: '8.0.x'
 
 jobs:
   build:
@@ -17,37 +17,30 @@ jobs:
       - name: Checkout GitHub repository
         uses: actions/checkout@v4
 
-      - name: Set up Node.js ${{ env.NODE_VERSION }}
-        uses: actions/setup-node@v3
+      - name: Setup .NET ${{ env.DOTNET_VERSION }}
+        uses: actions/setup-dotnet@v3
         with:
-          node-version: ${{ env.NODE_VERSION }}
+          dotnet-version: ${{ env.DOTNET_VERSION }}
 
-      - name: Cache Node.js dependencies
-        uses: actions/cache@v3
-        with:
-          path: |
-            ~/.npm
-            node_modules
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-
-
-      - name: Install dependencies and run tests
+      - name: Build and test
         run: |
           pushd ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
-          npm install
-          npm run build --if-present
-          npm run test --if-present
+          dotnet build --configuration Release
+          dotnet test --no-build --configuration Release
           popd
 
-      - name: Package application for deployment
+      - name: Package application
         run: |
-          zip -r release.zip ./*
+          pushd ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
+          dotnet publish -c Release -o ./publish
+          cd publish
+          zip -r ../release.zip ./*
+          popd
 
-      - name: Upload deployment artifact
+      - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: node-app
+          name: function-app
           path: release.zip
 
   deploy:
@@ -56,12 +49,12 @@ jobs:
     permissions:
       id-token: write
     steps:
-      - name: Download deployment artifact
+      - name: Download artifact
         uses: actions/download-artifact@v4
         with:
-          name: node-app
+          name: function-app
 
-      - name: Unzip artifact for deployment
+      - name: Unzip artifact
         run: unzip release.zip
 
       - name: Login to Azure
@@ -73,8 +66,7 @@ jobs:
 
       - name: Deploy to Azure Function App
         uses: Azure/functions-action@v1
-        id: fa
         with:
-          app-name: "MondayPOCFA"
-          slot-name: "Production"
+          app-name: 'MondayPOCFA'
+          slot-name: 'Production'
           package: ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
